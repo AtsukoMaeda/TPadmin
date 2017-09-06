@@ -1,0 +1,76 @@
+<layout name='Layout/layout'/>
+<div class="content">        
+        <div class="header">            
+            <h1 class="page-title">添加菜单</h1>
+        </div>
+        
+        <ul class="breadcrumb">
+            <li><a href="{:U('Index/index')}">首页</a><span class="divider">/</li>
+            <li>开发者专用<span class="divider">/</span></li>
+            <li>添加菜单</li>
+        </ul>
+        <div class="container-fluid">
+            <div class="row-fluid">
+<style>
+.addform{
+	padding-left: 10px;
+	/*width: 275px;*/
+}
+</style>
+<div class="well">
+<div class="addform">
+	<form id="addform">
+		<label>父级栏目</label>
+		<select name="parentid">
+		<option value='0'>--顶级栏目--</option>
+		<volist name='list' id='v'>
+		<option value="{$v.menuid}">{:str_repeat('&nbsp;&nbsp;&nbsp;',$v[deep])}├&nbsp;{$v.menuname}</option>
+		</volist>
+		</select>
+		<d class="tishi parentid"></d>
+		<label>图标</label>
+		<input type="text" name="i"><d class="tishi i"></d>
+		<label>栏目名称</label>
+		<input type="text" name="menuname"><d class="tishi menuname"></d>
+		<label>模块名称</label>
+		<input type="text" name="m"><d class="tishi m"></d>
+		<label>控制器名称</label>
+		<input type="text" name="c"><d class="tishi c"></d>
+		<label>方法名称</label>
+		<input type="text" name="action"><d class="tishi action"></d>
+		<label>排序</label>
+		<input type="text" name="listorder" value="255">
+		<label>是否显示</label>
+		<input type="radio" name="display" value="1" checked="checked">是
+		<input type="radio" name="display" value="0">否
+	</form>
+	<div class="btn add" style="margin-left:160px;">确定</div>
+</div>
+</div>
+<script>
+$('.add').click(function(){
+	var obj=$('#addform').serialize();
+	$.ajax({
+		url:"{:U('Menu/menuAdd')}",
+		data:obj,
+		dataType:'json',
+		type:'post',
+		success:function(back){
+			if(back==''){
+				layer.msg('添加成功！');
+				setTimeout(function(){location.reload()},500);
+			}else{
+				$('.tishi').hide();
+				for(k in back){
+					$('.'+k).text('*'+back[k]).show();
+				}
+			}
+		}
+	});
+});
+$(document).keydown(function(event){
+	if(event.keyCode==13){
+		$('.add').click();
+	}
+});
+</script>

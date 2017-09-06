@@ -1,0 +1,134 @@
+<layout name='Layout/layout'/>
+<div class="content">
+<include file='Layout/bread'/>
+<div class="well">
+	 <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>管理员账号</th>
+          <th>所属角色</th>
+          <th>创建时间</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+      	<volist name='list' id='v'>
+        <tr>
+          <td class="hide">{$v.id}</td>
+        	<td class="hide">{$v.roleid}</td>
+          <td>{$v.username}</td>
+          <td>{$v.rolename}</td>
+          <td>{:date('Y-m-d H:i:s',$v[inputtime])}</td>
+          <td>
+              <a href="#update" role="button" data-toggle="modal" class="toUpdate"><i class="icon-pencil"></i></a>&nbsp;
+              <a href="#delete" role="button" data-toggle="modal" class="toDelte"><i class="icon-remove"></i></a>
+          </td>
+        </tr>       
+    </volist>
+      </tbody>
+    </table>
+</div>
+</div>
+<div class="modal  hide fade small" id="update" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">修改管理员</h3>
+    </div>
+    <div class="modal-body updateform">
+    <form id="updateform">
+    <label>所属角色</label>
+    <select name="roleid">
+    <volist name='role' id='v'>
+    	<option value="{$v.roleid}">{$v.rolename}</option>
+    </volist>
+    </select>
+    <label>账号</label>
+    <input type="text" name="username">
+    <label>新密码</label>
+    <input type="text" name="password">
+    <input type="hidden" name="id">
+    </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+        <button class="btn btn-danger update" data-dismiss="modal">确定</button>
+    </div>
+</div>
+<div class="modal small hide fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">删除管理员</h3>
+    </div>
+    <div class="modal-body">
+        <p class="error-text"><i class="icon-warning-sign modal-icon"></i>是否确认删除该管理员?</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+        <button class="btn btn-danger delete" data-dismiss="modal">删除</button>
+    </div>
+</div>
+<script>
+	$('.toUpdate').click(function(event) {
+		var roleid=$(this).parent().prevAll(':eq(3)').text(),
+			username=$(this).parent().prevAll(':eq(2)').text(),
+			id=$(this).parent().prevAll(':eq(4)').text();
+		$('.updateform').find('option[value='+roleid+']').attr('selected','selected');
+		$('.updateform').find('input').eq(0).attr('value',username);
+		$('.updateform').find('input').eq(1).val('');
+		$('.updateform').find('input').eq(2).val(id);
+	});
+	$('.update').click(function(event) {
+		var obj=$('#updateform').serialize();
+		$.post("{:U('Admin/adminUpdate')}",obj,function(back){
+			switch(back){
+				case '1':
+				layer.msg('管理员信息修改成功！');
+				setTimeout(function(){
+					location.reload();
+				},500);
+				break;
+				case '2':
+				layer.msg('管理员信息修改失败！');
+				break;
+				case '3':
+				layer.msg('你无权修改超级管理员的信息');
+				break;
+				case '4':
+				layer.msg('你无权赋予该管理员为超级管理员');
+				break;
+			}
+		});
+	});
+
+	$('.toDelte').click(function(event) {
+		var id=$(this).parent().prevAll(':eq(4)').text();
+		$('.delete').val(id);
+	});
+	$('.delete').click(function(event) {
+		var id=$(this).val();
+		$.get("{:U('Admin/adminDel')}",{'id':id},function(back){
+			switch(back){
+				case '1':
+				layer.msg('删除成功！');
+				setTimeout(function(){location.reload()},500);
+				break;
+				case '2':
+				layer.msg('删除失败！');
+				break;
+				case '3':
+				layer.msg('超级管理员不能删除');
+				break;
+			}
+		});
+	});
+	$('.updateform').keydown(function(event) {
+		if(event.keyCode==13){
+			$('.update').click();
+		}		
+	});
+	$('#delete').keydown(function(event) {
+		if(event.keyCode==13){
+			$('.delete').click();
+		}		
+	});
+</script>

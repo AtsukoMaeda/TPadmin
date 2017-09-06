@@ -1,0 +1,37 @@
+<layout name='Layout/layout'/>
+<div class="content">
+<include file='Layout/bread'/>
+<div class="well">
+<div class="roleadd">
+<label>角色名</label>
+<input type="text" name="rolename"><br/>
+<div class="btn add" style="margin-left:160px;">确定</div>
+</div>
+</div>
+</div>
+<script>
+$('.add').click(function(){
+	var rolename=$('input').val();
+	$.get("{:U(Admin/roleAdd)}",{'rolename':rolename},function(back){
+		switch(back){
+			case '1':
+			layer.msg('增加角色成功！');
+			break;
+			case '2':
+			layer.msg('增加角色失败！')
+			break;
+			case '3':
+			layer.msg('该角色名已经存在！')
+			break;
+			case '4':
+			layer.msg('角色名不能为空！')
+			break;
+		}
+	});
+});
+$(document).keydown(function(event){
+	if(event.keyCode==13){
+		$('.add').click();
+	}
+});
+</script>

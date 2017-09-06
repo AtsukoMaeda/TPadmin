@@ -1,0 +1,247 @@
+<layout name='Layout/layout'/>
+<div class="content">        
+        <div class="header">            
+            <h1 class="page-title">菜单管理</h1>
+        </div>
+        
+        <ul class="breadcrumb">
+            <li><a href="{:U('Index/index')}">首页</a><span class="divider">/</li>
+            <li>开发者专用<span class="divider">/</span></li>
+            <li>菜单管理</li>
+        </ul>
+
+        <div class="container-fluid">
+            <div class="row-fluid">
+       
+<div class="well">
+  
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>排序</th>
+          <th>栏目ID</th>
+          <th>栏目名称</th>
+          <th>状态</th>
+          <th>m/c/a</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <form action="{:U('Admin/Menu/menuSort')}" method="post">
+      <tbody>
+      	<volist name='list' id='v'>
+        <tr>
+          <td><input type="text" name="{$v.menuid}-{$v.listorder}" value="{$v.listorder}" style="width:30px;"/></td>
+          <td>{$v.menuid}</td>
+          <td>{:str_repeat('&nbsp;&nbsp;&nbsp;',$v[deep])}├&nbsp;{$v.menuname}</td>
+          <td display="{$v.display}" class="display">{$display[$v[display]]}</td>
+          <td>{$v.m}/{$v.c}/{$v.action}</td>
+          <td>
+          	  <a href="#add" role="button" data-toggle="modal" class="toAdd"><i class="icon-plus"></i></a>
+              <a href="#update" role="button" data-toggle="modal" class="toUpdate"><i class="icon-pencil"></i></a>
+              <a href="#delete" role="button" data-toggle="modal" class="toDelte"><i class="icon-remove"></i></a>
+          </td>
+        </tr>       
+    </volist>
+    <tr>
+      <td colspan="6">
+        <button type="submit" class="btn btn-info btn-sm">
+        <i class="icon-repeat bigger-110"></i>
+        排序
+        </button>
+      </td>
+    </tr>
+      </tbody>
+       </form>
+    </table>
+</div>
+<div class="modal hide fade" id="add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">增加栏目</h3>
+    </div>
+    <div class="modal-body">
+<form id="addform">
+<label>父级栏目</label>
+<select name="parentid">
+<volist name='list' id='v'>
+<option value="{$v.menuid}">{:str_repeat('&nbsp;&nbsp;&nbsp;',$v[deep])}├&nbsp;{$v.menuname}</option>
+</volist>
+</select>
+<d class="tishi parentid"></d>
+<label>栏目名称</label>
+<input type="text" name="menuname"><d class="tishi menuname"></d>
+<label>模块名称</label>
+<input type="text" name="m"><d class="tishi m"></d>
+<label>控制器名称</label>
+<input type="text" name="c"><d class="tishi c"></d>
+<label>方法名称</label>
+<input type="text" name="action"><d class="tishi"></d>
+<label>排序</label>
+<input type="text" name="listorder">
+<label>是否显示</label>
+<input type="radio" name="display" value="1">是
+<input type="radio" name="display" value="0">否
+</form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+        <button class="btn btn-danger add">确定</button>
+    </div>
+</div>
+<div class="modal  hide fade" id="update" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">修改栏目</h3>
+    </div>
+    <div class="modal-body updateform">
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+        <button class="btn btn-danger update" data-dismiss="modal">确定</button>
+    </div>
+</div>
+<div class="modal small hide fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">删除菜单</h3>
+    </div>
+    <div class="modal-body">
+        <p class="error-text"><i class="icon-warning-sign modal-icon"></i>是否确认删除该菜单?</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+        <button class="btn btn-danger delete" data-dismiss="modal">删除</button>
+    </div>
+</div>
+<script>
+  $('.display').click(function(){
+      var menuid=$(this).prevAll(':eq(1)').text(),
+          display=$(this).attr('display'),
+          that=this,
+          arr=[1,0];
+      $.ajax({
+        url:'{:U("Menu/dc")}',
+        data:{'menuid':menuid,'display':display},
+        type:'post',
+        success:function(back){
+          switch (back){
+            case '1':
+                  if(display=='1'){
+                    var html='<d style="color:red;">隐藏</d>';
+                    $(that).html(html);
+                    $(that).attr('display',arr[display]);
+                  }else{
+                    $(that).text('显示');
+                    $(that).attr('display',arr[display]);
+                  }
+                  break;
+            case '2':
+                  layer.msg('修改失败！');
+                  break;
+          }
+        }
+      });
+  });
+  $('.delete').click(function(){
+    var menuid=$(this).attr('menuid');
+    $.ajax({
+      url:"{:U('Menu/menuDelete')}",
+      data:{'menuid':menuid},
+      type:'post',
+      dataType:'json',
+      success:function(back){
+        if(back=='1'){
+          layer.msg('删除成功！');
+          setTimeout(function(){
+            location.reload();
+          },500);
+        }else{
+          layer.msg('删除失败！');
+        }
+      }
+    });
+  });
+  $('.toDelte').click(function(){
+    var menuid=$(this).parent().prevAll(':eq(3)').text();
+    $('.delete').attr('menuid',menuid);
+  });
+  $('.toUpdate').click(function(){
+    var menuid=$(this).parent().prevAll(':eq(3)').text();
+    $.ajax({
+      url:"{:U('Menu/getInfo')}",
+      data:{'menuid':menuid},
+      type:'post',
+      success:function(back){
+        $('.updateform').html(back);
+      }
+    });
+  });
+  $('.update').click(function(){
+    $.ajax({
+      url:"{:U('Menu/menuUpdate')}",
+      data:$('#updateform').serialize(),
+      type:'post',
+      success:function(back){
+        switch(back){
+          case '1':
+                layer.msg('修改成功！');
+                setTimeout(function(){
+                  location.reload();
+                },500);
+                break;
+          case '2':
+                layer.msg('修改失败！');
+                break;
+        }
+      }
+    });
+  });
+  var addflag=true;
+  $('.toAdd').click(function(){
+    $('.tishi').hide();
+    $('#addform :input').val('');
+    $('#addform :input[name=listorder]').val(255);
+    $('#addform :input[name=display]').eq(0).attr('checked','checked').end().val(1);
+    $('#addform :input[name=display]').eq(1).val(0);
+    if(!addflag){
+      $('#addform').find('option').eq(0).remove();
+    }
+    var menuid=$(this).parent().prevAll(':eq(3)').text(),
+    html='<option value="'+menuid+'" selected="selected">--选择父级--</option>';
+    $('#addform').find('select').prepend(html);
+    addflag=false;
+  });
+  $('.add').click(function(){
+    var that=this;
+    $.ajax({
+      url:"{:U('Menu/addChild')}",
+      data:$('#addform').serialize(),
+      type:'post',
+      dataType:'json',
+      success:function(back){
+        if(back==''){
+          $('.tishi').hide();
+          layer.msg('新增栏目成功！');
+          setTimeout(function(){
+            location.reload();
+          },500);
+        }else{
+            $('.tishi').hide();
+          for(k in back){
+            $('.'+k).text('*'+back[k]).show();
+          }
+        }
+      }
+    });
+  });
+  $('#addform').keydown(function(event){
+    if(event.keyCode==13){
+      $('.add').trigger('click');
+    }
+  });
+  $('.modal').on('keydown','#updateform',function(event){
+    if(event.keyCode==13){
+      $('.update').trigger('click');
+    }
+  });
+</script>

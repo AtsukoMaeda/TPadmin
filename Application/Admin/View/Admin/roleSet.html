@@ -1,0 +1,104 @@
+<layout name='Layout/layout'/>
+<div class="content">
+<include file='Layout/bread'/>
+<header><h3>{$rolename}</h3></header>
+<div class="well">
+	<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th width="20px;"> <input type="checkbox" name="allow[]"></th>
+				<th>栏目名称</th>
+			</tr>
+		</thead>
+		<tbody>
+			<volist name='list' id='v'>
+				<tr>
+					<td><input type="checkbox" name="allow[]" value="{$v.menuid}" parentid="{$v.parentid}" <?php if(in_array($v['menuid'],$rolearr)){ ?>checked="checked"<?php } ?>></td>
+					<td>{:str_repeat('&nbsp;&nbsp;&nbsp;',$v[deep])}├&nbsp;{$v.menuname}</td>
+				</tr>
+			</volist>
+			<tr>
+      <td colspan="6">
+        <div class="btn btn-info btn-sm set">
+        设置
+        </div>
+      </td>
+    </tr>
+		</tbody>
+	</table>
+</div>
+<script>
+	var roleid={:I('get.roleid')};
+	function selectAll(int){
+		if(int==0){
+			return 0;
+		}
+		$('input:checkbox[value='+int+']').prop('checked',true);
+		var int=$('input:checkbox[value='+int+']').attr('parentid');
+		selectAll(int);
+	}
+	function onlyCheck(int){
+		if(int==0){
+			return 0;
+		}
+		var parentid=$('input:checkbox[value='+int+']').attr('parentid'),
+		 	count=$('input:checkbox[parentid='+parentid+']:checked').length;
+		if(count==0){
+			$('input:checkbox[value='+parentid+']').prop('checked',false);
+			onlyCheck(parentid);
+		}
+	}
+	function outAll(int){
+		var child=$('input:checkbox[parentid='+int+']');
+		$.each(child,function(index, el) {
+			var childs=$(this).val();
+			$(this).prop('checked',false);
+			outAll(childs);
+		});
+	}
+	$('input:checkbox:eq(0)').click(function(event) {
+		var status=$(this).prop('checked');
+		$(':checkbox:gt(0)').prop('checked',status);
+	});
+	$('input:checkbox:gt(0)').click(function(event) {
+		var menuid=$(this).val(),
+			parentid=$(this).attr('parentid'),
+			status=$(this).prop('checked');
+			if(status){
+				selectAll(parentid);
+			}else{
+				onlyCheck(menuid);
+			}
+	});
+	$('.set').click(function(event) {
+		var obj=$('input:checkbox:gt(0):checked'),
+		setarr='';
+		$.each(obj, function(index, val) {
+			 setarr +=$(this).val()+',';
+		});
+		console.log(setarr);
+		$.post("{:U('Admin/roleSet')}",{'setarr':setarr,'roleid':roleid},function(back){
+			switch(back){
+				case '1':
+				layer.msg('设置权限成功！');
+				setTimeout(function(){location.reload()},500);
+				break;
+				case '2':
+				layer.msg('设置权限失败！');
+				break;
+				case '3':
+				layer.msg('超级管理员不需设置权限！');
+				break;
+				default:
+				layer.msg('你没有该权限！');
+				break;
+			}	
+		});
+	});
+	$('input:checkbox').click(function(event) {
+		var status=$(this).prop('checked');
+		if(!status){
+			outAll($(this).val());
+		}
+	});
+</script>

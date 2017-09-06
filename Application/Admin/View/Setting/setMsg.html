@@ -1,0 +1,45 @@
+<layout name='Layout/layout'/>
+<div class="content">        
+<include file='Layout/bread' />
+<div class="well">
+<div class="addform">
+	<form id="addform" action="{:U('Setting/setMsg')}" method="post" enctype="multipart/form-data" target="exec_target">
+		<label>网站标题</label>
+		<input type="text" name="webtitle" value="{$webinfo.webtitle}"><d class="tishi webtitle"></d>
+		<label>网站关键字</label>
+		<input type="text" name="webkey" value="{$webinfo.webkey}"><d class="tishi webkey"></d>
+		<label>网站描述</label>
+		<input type="text" name="webdes" value="{$webinfo.webdes}"><d class="tishi webdes"></d>
+		<label>Logo</label>
+		<img src="{:C('FILE_PATH')}{$webinfo.logo}"><br/>
+		<input type="file" name="logo"><d class="tishi logo"></d>
+		<label>备案信息</label>
+		<input type="text" name="rcopy" value="{$webinfo.rcopy}"><d class="tishi rcopy"></d><br/>
+	<!-- <div class="btn add" style="margin-left:160px;">确定</div> -->
+	<input type="submit" value="确定" class="btn"  style="margin-left:160px;">
+	</form>
+</div>
+</div>
+<iframe id="exec_target" name="exec_target" style="display: none;"></iframe>
+<script>
+$('#addform').submit(function() {
+	$('.tishi').hide();
+	$("#exec_target").load(function() {
+		var data = $(window.frames['exec_target'].document.body).find("return").html();
+		data=$.parseJSON(data);
+		if(data==null){
+			layer.msg('提交成功');
+			setTimeout(function(){location.reload();},500);		
+		}else{
+			for(k in data){
+				$('.'+k).text('*'+data[k]).show();
+			}
+		}
+	});
+});
+$(document).keydown(function(event){
+	if(event.keyCode==13){
+		$('#addform').submit();
+	}
+});
+</script>

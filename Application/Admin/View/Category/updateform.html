@@ -1,0 +1,21 @@
+<form id="updateform">
+<input type="hidden" value="{$info.id}" name="id">
+<label>父级栏目</label>
+<select name="parentid">
+<option value="{$info.parentid}">--选择父级--</option>
+<volist name='list' id='v'>
+<option value="{$v.menuid}">{:str_repeat('&nbsp;&nbsp;&nbsp;',$v[deep])}├&nbsp;{$v.category_name}</option>
+</volist>
+</select>
+<label>栏目名称</label>
+<input type="text" name="category_name" value="{$info.category_name}"><d class="tishi category_name"></d>
+<label>控制器名称</label>
+<input type="text" name="controller" value="{$info.controller}"><d class="tishi controller"></d>
+<label>方法名称</label>
+<input type="text" name="action" value="{$info.action}"><d class="tishi action"></d>
+<label>排序</label>
+<input type="text" name="listorder" value="{$info.listorder}"><d class="tishi listorder"></d>
+<label>是否显示</label>
+<input type="radio" name="display" value="1" <?php echo $info['display']?'checked="checked"':null; ?>>是
+<input type="radio" name="display" value="0" <?php echo $info['display']?null:'checked="checked"'; ?>>否
+</form>

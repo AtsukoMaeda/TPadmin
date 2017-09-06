@@ -1,0 +1,94 @@
+<layout name='Layout/layout'/>
+<div class="content">
+        
+        <div class="header">
+            <h1 class="page-title">首页</h1>
+        </div>
+        
+                <ul class="breadcrumb">
+            <li><a href="javascript:void(0)">首页</a> <span class="divider">/</span></li>
+        </ul>
+
+        <div class="container-fluid">
+            <div class="row-fluid">
+                    
+<?php if(cookie('loginInfo')['login_ip']!=$nowInfo['login_ip']){ ?>
+<div class="row-fluid">
+    <div class="alert alert-info">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        <strong>提醒:</strong> 您此次登陆的IP与上次的不同!
+    </div>
+</div>
+<?php } ?>
+<div class="row-fluid">
+    <div class="block span6">
+        <a href="#tablewidget" class="block-heading" data-toggle="collapse">用户</a>
+        <div id="tablewidget" class="block-body collapse in">
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td>当前用户</td>
+                  <td>{$Think.session.admin}</td>
+                </tr>
+                <tr>
+                  <td>级别</td>
+                  <td>{$nowInfo.role}</td>
+                </tr>
+                <tr>
+                  <td>本次登陆地址</td>
+                  <td><i class="icon-map-marker light-orange bigger-110"></i>&nbsp;{$nowInfo.login_address}</td>
+                </tr>
+                <tr>
+                  <td>上次登陆地址</td>
+                  <td><i class="icon-map-marker light-orange bigger-110"></i>&nbsp;{:cookie('loginInfo')['login_address']}</td>
+                </tr>
+                <tr>
+                  <td>本次登陆IP</td>
+                  <td><i class="icon-map-marker light-orange bigger-110"></i>&nbsp;{$nowInfo.login_ip}</td>
+                </tr>
+                <tr>
+                  <td>上次登陆IP</td>
+                  <td><i class="icon-map-marker light-orange bigger-110"></i>&nbsp;{:cookie('loginInfo')['login_ip']}</td>
+                </tr>
+                <tr>
+                  <td>上次登陆时间</td>
+                  <td>{:date('Y-m-d H:i:s',cookie('loginInfo')['login_time'])}</td>
+                </tr>
+                <tr>
+                  <td>本次登陆时间</td>
+                  <td>{:date('Y-m-d H:i:s',$nowInfo['login_time'])}</td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="block span6">
+        <a href="#widget1container" class="block-heading" data-toggle="collapse">版本 </a>
+       <div id="tablewidget" class="block-body collapse in">
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td>操作系统</td>
+                  <td><?php echo php_uname('s').'&nbsp;'.php_uname('r');?></td>
+                </tr>
+                <tr>
+                  <td>服务器版本</td>
+                  <td>{$_SERVER['SERVER_SOFTWARE']}</td>
+                </tr>
+                <tr>
+                  <td>当前PHP版本</td>
+                  <td><?php echo PHP_VERSION;?></td>
+                </tr>
+                <tr>
+                  <td>Zend版本</td>
+                  <td><?php echo Zend_Version();?></td>
+                </tr>
+                <tr>
+                  <td>服务器IP</td>
+                  <td><i class="icon-map-marker light-orange bigger-110"></i>&nbsp;<?php echo GetHostByName($_SERVER['SERVER_NAME']);?></td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
+    </div>
+</div>

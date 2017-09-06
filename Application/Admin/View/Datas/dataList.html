@@ -1,0 +1,81 @@
+<layout name='Layout/layout'/>
+<div class="content">
+<include file='Layout/bread'/>
+<div class="well">
+<style>
+.pages{
+	text-align: center;
+}
+.pages a{
+	width: 10px;
+	height: 10px;
+	color: #fff;
+	background:#8D8D8D;
+	line-height: 30px;
+	margin: 0 0 0 22px;
+	padding: 1px 5px;
+}
+.pages span{
+	line-height: 30px;
+	width: 10px;
+	height: 10px;
+	background:#fff;
+	padding: 1px 5px;
+	margin: 0 0 0 22px;
+}
+</style>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>表名</th>
+          <th>注释</th>
+          <th>最后更新时间</th>
+          <th>上次备份时间</th>
+          <th>上次恢复时间</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+      	<volist name='list' id='v'>
+        <tr>
+          <td><?php echo $a=$v['tables_in_'.$dataname]?$v['tables_in_'.$dataname]:$v['Tables_in_'.$dataname]; ?></td>
+          <td>{$v.comment}</td>
+          <td>{$v.update_time}</td>
+          <td>{:date('Y-m-d H:i:s',$v[download_time])}</td>
+          <td>{:date('Y-m-d H:i:s',$v[upload_time])}</td>
+          <td>
+                <a href="{:U('Datas/download',['table'=>$a])}"><i class="icon-download"></i>备份</a>&nbsp;
+                <a href="#update" role="button" data-toggle="modal" class="toUpdate"><i class="icon-upload"></i>恢复</a>
+          </td>
+        </tr>       
+    </volist>
+      </tbody>
+    </table>
+</div>
+</div>
+<div class="modal  hide fade" id="update" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">恢复数据</h3>
+    </div>
+    <div class="modal-body">
+    <form action="{:U('Datas/upload')}" method="post" enctype="multipart/form-data" id="uploadform">
+      <input type="file" name="sql">
+      <input type="hidden" name="table">
+    </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+        <button class="btn btn-danger update">确定</button>
+    </div>
+</div>
+<script>
+  $('.update').click(function(event) {
+    $('#uploadform').submit();
+  });
+  $('.toUpdate').click(function(event) {
+    var table=$(this).parent().prevAll(':eq(4)').text();
+    $('input[name=table]').val(table);
+    $('input[name=sql]').val('');
+  });
+</script>

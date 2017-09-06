@@ -1,0 +1,21 @@
+ <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>账号</th>
+          <th>时间</th>
+          <th>操作</th>
+          <th>IP地址</th>
+        </tr>
+      </thead>
+      <tbody>
+        <volist name='list' id='v'>
+        <tr class="data">
+          <td>{$v.username}</td>
+          <td>{:date('Y-m-d H:i:s',$v['add_time'])}</td>
+          <td>{$v.content}</td>
+          <td>{$v.ip}</td>
+        </tr>       
+    </volist>
+      </tbody>
+    </table>
+    <div class="pages">{$pages}</div>

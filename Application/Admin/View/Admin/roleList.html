@@ -1,0 +1,115 @@
+<layout name='Layout/layout'/>
+<div class="content">
+<include file='Layout/bread'/>
+<div class="well">
+	<table class="table  table-bordered">
+		<thead>
+			<tr>
+				<th>角色名称</th>
+				<th>该角色下管理员数目</th>
+				<th>操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			<volist name='list' id='v'>
+		           <tr roleid="{$v.roleid}">
+				<td>{$v.rolename}</td>
+				<td>{$v.count}</td>
+				<td>
+				<a href="{:U('Admin/roleSet',['roleid'=>$v['roleid']])}"><i class="icon-key"></i></a>&nbsp;
+				<a href="#update" role="button" data-toggle="modal" class="toUpdate"><i class="icon-pencil"></i></a>&nbsp;
+              			<a href="#delete" role="button" data-toggle="modal" class="toDelte"><i class="icon-remove"></i></a>
+              			</td>
+			</tr>
+			</volist>
+		</tbody>
+	</table>
+</div>
+</div>
+<div class="modal  hide fade small" id="update" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">修改角色</h3>
+    </div>
+    <div class="modal-body updateform">
+    <form id="updateform">
+    <label>角色名称</label>
+    <input type="text" name="rolename">
+    </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+        <button class="btn btn-danger update" data-dismiss="modal">确定</button>
+    </div>
+</div>
+<div class="modal small hide fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">删除角色</h3>
+    </div>
+    <div class="modal-body">
+        <p class="error-text"><i class="icon-warning-sign modal-icon"></i>是否确认删除该角色?<br/>该角色下的管理员也会删除！！</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+        <button class="btn btn-danger delete" data-dismiss="modal">删除</button>
+    </div>
+</div>
+<script>
+ 	var roleid=null;
+	$('.toUpdate').click(function(event) {
+		roleid=$(this).parents('tr').attr('roleid');
+		var rolename=$(this).parent().prevAll(':eq(1)').text();
+		$('#updateform').find('input[name=rolename]').attr('placeholder',rolename);
+	});
+	$('.update').click(function(event) {
+		var rolename=$('#updateform').find('input[name=rolename]').val();
+		$.post("{:U('Admin/roleUpdate')}",{'roleid':roleid,'rolename':rolename},function(back){
+			switch(back){
+				case '1':
+				layer.msg('修改角色成功！');
+				setTimeout(function(){location.reload()},500);
+				break;
+				case '2':
+				layer.msg('修改角色失败！');
+				break;
+				case '3':
+				layer.msg('角色名称不能为空！');
+				break;
+				case '4':
+				layer.msg('此项只有超级管理员可以修改！')
+				break;
+			}
+		});
+	});
+	$('.updateform').keydown(function(event) {
+		if(event.keyCode==13){
+			$('.update').click();
+		}
+	});
+
+	$('.toDelte').click(function(event) {
+		roleid=$(this).parents('tr').attr('roleid');
+	});
+	$('#delete').keydown(function(event) {
+		if(event.keyCode==13){
+			$('.delete').click();
+		}
+	});
+	$('.delete').click(function(event) {
+		$.get("{:U('Admin/roleDel')}",{'roleid':roleid},function(back){
+			switch(back){
+				case '1':
+				layer.msg('删除角色成功！');
+				setTimeout(function(){location.reload()},500);
+				break;
+				case '2':
+				layer.msg('删除角色失败！');
+				break;
+				case '3':
+				layer.msg('超级管理员角色不可删除！');
+				break;
+			}
+		});
+	});
+</script>

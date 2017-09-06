@@ -1,0 +1,47 @@
+<layout name='Layout/layout'/>
+<div class="content">
+<include file='Layout/bread'/>
+<div class="well">
+<style>
+	d{
+		color: red;
+	}
+</style>
+<form id="addfrom">
+	<label>所属角色</label>
+	<select name="roleid">
+	<volist name='role' id='v'>
+		<option value="{$v.roleid}">{$v.rolename}</option>
+	</volist>
+	</select><d class="hide roleid"></d>
+	<label>账号</label>
+	<input type="text" name="username"><d class="hide username"></d>
+	<label>密码</label>
+	<input type="text" name="password"><d class="hide password"></d><br/>
+	<div class="btn add" style="margin-left:160px;">确定</div>
+</form>
+</div>
+</div>
+<script>
+	$('.add').click(function(event) {
+		var obj=$('#addfrom').serialize();
+		$.post("{:U('Admin/adminAdd')}",obj,function(back){
+			$('d').hide();
+			if(back=='1'){
+				layer.msg('添加管理员成功！');
+				setTimeout(function(){location.reload()},500);
+			}
+			if(back=='2'){
+				layer.msg('添加管理员失败！');
+			}
+			for(k in back){
+				$('.'+k).text('*'+back[k]).show();
+			}
+		},'json');
+	});
+	$('#addfrom').keydown(function(event) {
+		if(event.keyCode==13){
+			$('.add').click();
+		}
+	});
+</script>

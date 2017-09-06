@@ -1,0 +1,58 @@
+<layout name='Layout/layout'/>
+<div class="content">
+<include file='Layout/bread'/>
+<div class="well">
+<style>
+.pages{
+	text-align: center;
+}
+.pages a{
+	width: 10px;
+	height: 10px;
+	color: #fff;
+	background:#8D8D8D;
+	line-height: 30px;
+	margin: 0 0 0 22px;
+	padding: 1px 5px;
+}
+.pages span{
+	line-height: 30px;
+	width: 10px;
+	height: 10px;
+	background:#fff;
+	padding: 1px 5px;
+	margin: 0 0 0 22px;
+}
+</style>
+<div class="ajaxback">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>账号</th>
+          <th>时间</th>
+          <th>操作</th>
+          <th>IP地址</th>
+        </tr>
+      </thead>
+      <tbody>
+        <volist name='list' id='v'>
+        <tr class="data">
+          <td>{$v.username}</td>
+          <td>{:date('Y-m-d H:i:s',$v['add_time'])}</td>
+          <td>{$v.content}</td>
+          <td>{$v.ip}</td>
+        </tr>       
+    </volist>
+      </tbody>
+    </table>
+    <div class="pages">{$pages}</div>
+</div>
+</div>
+</div>
+<script>
+  function mypage(nu){
+   $.get("{:U('Log/logList')}",{'p':nu},function(back){
+    $('.ajaxback').html(back);
+   });
+  }
+</script>

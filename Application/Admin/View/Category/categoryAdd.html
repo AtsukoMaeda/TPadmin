@@ -1,0 +1,50 @@
+<layout name='Layout/layout'/>
+<div class="content">
+<include file='Layout/bread'/>
+<div class="well">
+<style>
+	d{
+		color: red;
+	}
+</style>
+<form id="addfrom">
+	<label>父级栏目</label>
+	<select name="parentid">
+		<option value='0'>--顶级栏目--</option>
+		<volist name='list' id='v'>
+		<option value="{$v.id}">{:str_repeat('&nbsp;&nbsp;&nbsp;',$v[deep])}├&nbsp;{$v.category_name}</option>
+		</volist>
+	</select>
+	<d class="tishi parentid"></d>
+	<label>栏目名称</label>
+	<input type="text" name="category_name"><d class="tishi category_name"></d>
+	<label>控制器名</label>
+	<input type="text" name="controller"><d class="tishi controller"></d>
+	<label>方法名</label>
+	<input type="text" name="action"><d class="tishi action"></d>
+	<label>栏目排序</label>
+	<input type="text" name="listorder" value="255"><br/>
+	<div class="btn add" style="margin-left:160px;">确定</div>
+</form>
+</div>
+</div>
+<script>
+$('.add').click(function(event) {
+	$('.tishi').hide();
+	var post=$('#addfrom').serialize();
+	$.post("{:U('Category/categoryAdd')}",post,function(back){
+		if(back=='1'){
+			layer.msg('增加栏目成功！');
+			setTimeout(function(){location.reload();},500);
+		}
+		for(k in back){
+			$('.'+k).text('*'+back[k]).show();
+		}
+	},'json');
+});
+	$('#addfrom').keydown(function(event) {
+		if(event.keyCode==13){
+			$('.add').click();
+		}
+	});
+</script>
